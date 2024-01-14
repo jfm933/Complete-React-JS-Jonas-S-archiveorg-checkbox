@@ -415,21 +415,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const videoListContainer = document.getElementById("videoList");
 
-  // Function to get the saved state from localStorage
   function getCheckboxState(id) {
     return localStorage.getItem(id) === "true";
   }
 
-  // Function to set the checkbox state in localStorage
   function setCheckboxState(id, checked) {
     localStorage.setItem(id, checked);
   }
 
   // Create checkboxes for each video title
   videoTitles.forEach((title, index) => {
+    const videoNumber = index + 1;
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.id = `video${index + 1}`;
+    checkbox.id = `video${videoNumber}`;
     checkbox.value = title;
 
     // Set the initial state based on localStorage
@@ -441,8 +440,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const label = document.createElement("label");
-    label.htmlFor = `video${index + 1}`;
-    label.appendChild(document.createTextNode(`Video ${index + 1}: ${title}`));
+    label.htmlFor = `video${videoNumber}`;
+    label.appendChild(
+      document.createTextNode(`Video ${videoNumber}: ${title}`)
+    );
 
     const lineBreak = document.createElement("br");
 
@@ -450,4 +451,18 @@ document.addEventListener("DOMContentLoaded", function () {
     videoListContainer.appendChild(label);
     videoListContainer.appendChild(lineBreak);
   });
+
+  // Function to check checkboxes from video 1 to 53
+  function checkVideos(start, end) {
+    for (let i = start; i <= end; i++) {
+      const checkbox = document.getElementById(`video${i}`);
+      if (checkbox) {
+        checkbox.checked = true;
+        setCheckboxState(`video${i}`, true);
+      }
+    }
+  }
+
+  // Check checkboxes from video 1 to 53
+  checkVideos(1, 53);
 });
