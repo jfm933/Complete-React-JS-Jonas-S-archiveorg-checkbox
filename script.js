@@ -412,57 +412,74 @@ document.addEventListener("DOMContentLoaded", function () {
     "Deploying to Vercel",
     "Where to Go from Here",
   ];
+  const videoList = document.getElementById("videoList");
 
-  const videoListContainer = document.getElementById("videoList");
-
-  function getCheckboxState(id) {
-    return localStorage.getItem(id) === "true";
-  }
-
-  function setCheckboxState(id, checked) {
-    localStorage.setItem(id, checked);
-  }
-
-  // Create checkboxes for each video title
-  videoTitles.forEach((title, index) => {
-    const videoNumber = index + 1;
+  function createCheckbox(title, index) {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.id = `video${videoNumber}`;
-    checkbox.value = title;
+    checkbox.id = `video${index + 1}`;
+    checkbox.checked = localStorage.getItem(`video${index + 1}`) === "true";
 
-    // Set the initial state based on localStorage
-    checkbox.checked = getCheckboxState(checkbox.id);
-
-    // Add event listener to update localStorage on checkbox change
     checkbox.addEventListener("change", function () {
-      setCheckboxState(this.id, this.checked);
+      localStorage.setItem(`video${index + 1}`, checkbox.checked);
     });
 
     const label = document.createElement("label");
-    label.htmlFor = `video${videoNumber}`;
-    label.appendChild(
-      document.createTextNode(`Video ${videoNumber}: ${title}`)
-    );
+    label.htmlFor = `video${index + 1}`;
+    label.textContent = `${title}`;
 
-    const lineBreak = document.createElement("br");
+    const listItem = document.createElement("div");
+    listItem.appendChild(checkbox);
+    listItem.appendChild(label);
 
-    videoListContainer.appendChild(checkbox);
-    videoListContainer.appendChild(label);
-    videoListContainer.appendChild(lineBreak);
-  });
+    return listItem;
+  }
 
-  // Function to check checkboxes from video 1 to 53
   function checkVideos(start, end) {
+    // Uncheck videos from previous range
+    for (let i = 1; i <= videoTitles.length; i++) {
+      const checkbox = document.getElementById(`video${i}`);
+      if (checkbox) {
+        checkbox.checked = false;
+        localStorage.setItem(`video${i}`, false);
+      }
+    }
+
+    // Check videos in the new range
     for (let i = start; i <= end; i++) {
       const checkbox = document.getElementById(`video${i}`);
       if (checkbox) {
         checkbox.checked = true;
-        setCheckboxState(`video${i}`, true);
+        localStorage.setItem(`video${i}`, true);
       }
     }
   }
 
-  // Check checkboxes from video 1 to 53
-  checkVideos(1, 53);
+  function clearLocalStorage() {
+    localStorage.clear();
+    // Uncheck all checkboxes
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => (checkbox.checked = false));
+  }
+
+  // Populate video titles
+  videoTitles.forEach((title, index) => {
+    videoList.appendChild(createCheckbox(title, index));
+  });
+
+  // Attach click event to the clearLocalStorageBtn button
+  const clearLocalStorageBtn = document.getElementById("clearLocalStorageBtn");
+  if (clearLocalStorageBtn) {
+    clearLocalStorageBtn.addEventListener("click", clearLocalStorage);
+  }
+
+  // Attach click event to the checkVideosBtn button
+  const checkVideosBtn = document.getElementById("checkVideosBtn");
+  if (checkVideosBtn) {
+    checkVideosBtn.addEventListener("click", function () {
+      const start = parseInt(document.getElementById("videoRangeStart").value);
+      const end = parseInt(document.getElementById("videoRangeEnd").value);
+      checkVideos(start, end);
+    });
+  }
 });
