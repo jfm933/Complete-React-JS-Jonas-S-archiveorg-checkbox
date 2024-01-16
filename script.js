@@ -426,7 +426,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const label = document.createElement("label");
     label.htmlFor = `video${index + 1}`;
-    label.textContent = `${title}`;
+    label.textContent = `Video ${index + 1}: ${title}`;
 
     const listItem = document.createElement("div");
     listItem.appendChild(checkbox);
